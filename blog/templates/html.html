@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <title>mohy blog</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=Josefin+Slab" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/main.css">
+    <script src="{% static "channels/js/websocketbridge.js" %}" type="text/javascript"></script>
+
+
+</head>
+<body>
+<header>
+    <ul class="nav">
+        <li class="li_nav"><a class="active a_nav" href="/blog">Home</a></li>
+        <li class="li_nav"><a class="a_nav" href="#contact">Contact</a></li>
+        <li class="li_nav"><a class="a_nav" href="#about">About</a></li>
+    </ul>
+</header>
+
+<div class="jumbotron" style="padding-top: 0 !important;">
+    <div class="container">
+        <div class="login-status">
+            {% if userlogedin %}
+                <p class="ch-login-status" id="welcomeUser"> welcome back {{ username }}</p>
+                <a href="/logout">
+                    <button name="logout" class="btn btn-danger">logout</button>
+                </a>
+            {% else %}
+                <a href="/blog/login" class="ch-login-status">
+                    <button name="login">login</button>
+                </a>
+                <a href="/blog/signup">
+                    <button name="signup">signup</button>
+                </a>
+            {% endif %}
+        </div>
+        <div class="jumbotron text-center welcome">
+            <h1>welcome to mohy blog </h1>
+        </div>
+
+        {% block html %}
+
+        {% endblock %}
+    </div>
+</div>
+<hr style="border-width: 3px">
+<footer id="contact">
+    <h2>contact</h2>
+    <ul class="Clist">
+
+        <li class="Clogo"><a href="https://github.com/engmohy90/"><img width="48" height="48" alt="github_logo"
+                                                                       src="{% static 'images/github.svg' %}"></a>
+        </li>
+        <li class="Clogo"><a href="https://www.linkedin.com/in/engmohyeldean/"><img width="48" height="48"
+                                                                                    alt="linkedin_logo"
+                                                                                    src="{% static 'images/linkedin.svg' %}"></a>
+        </li>
+        <li class="Clogo"><a href="engmohyeldean@gmail.com"><img width="48" height="48" alt="gmail_logo"
+                                                                 src="{% static 'images/gmail.svg' %}"></a></li>
+        <li class="Clogo"><a href="https://www.facebook.com/mohyEldean0"><img width="48" height="48"
+                                                                              alt="facebook_logo"
+                                                                              src="{% static 'images/facebook.svg' %}"></a>
+        </li>
+
+    </ul>
+
+</footer>
+</body>
+</html>

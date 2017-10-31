@@ -1,0 +1,294 @@
+{% extends "html.html" %}
+{% block html %}
+
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    {% block content %}
+        <div id="to-append-data">
+            {% for post in posts %}
+                <div class="post" id="post{{ post.id }}">
+                    <div>
+                        <h1><a href="{% url 'post_detail' pk=post.pk %}"><span
+                                id="title{{ post.id }}">{{ post.title }}</span></a></h1>
+                        <small style="color: gray"> by {{ post.author }}</small>
+                        <small class="date">
+                            {{ post.created_date }}
+                        </small>
+                    </div>
+                    <br>
+                    <p id="text{{ post.id }}">{{ post.text|linebreaksbr }}</p>
+                    <div id="{{ post.id }}">
+                        <button type="button" class="btn" data-toggle="modal"
+                                data-target="#deModal{{ post.id }}">
+                            delete
+                        </button>
+                        <div class="modal fade" id="deModal{{ post.id }}" role="dialog">
+                            <div class="modal-dialog">
+
+                                <!-- Modal content-->
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    </div>
+
+                                    <p>are you sure you want to delete this post</p>
+
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">no</button>
+                                        <button type="button" class="btn btn-default" id="delete{{ post.id }}">
+                                            yes
+                                        </button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <button type="button" class="btn" data-toggle="modal"
+                                data-target="#myModal{{ post.id }}">
+                            edit
+                        </button>
+                        <div class="modal fade" id="myModal{{ post.id }}" role="dialog">
+                            <div class="modal-dialog">
+
+                                <!-- Modal content-->
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+                                        <table>
+
+                                            <tr>
+                                                <td>
+                                                    <label>title</label>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <input value="{{ post.title }}" class="title{{ post.id }}"></td>
+                                            </tr>
+                                            <td>
+                                                <label>post</label>
+                                            </td>
+                                            <tr>
+                                                <td>
+                                                    <textarea class="text{{ post.id }}">{{ post.text }}</textarea></td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <button id="editPost{{ post.id }}" type="button">save</button>
+                                                </td>
+                                            </tr>
+
+                                        </table>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn" data-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <script>
+                            if ('{{ username }}' != '{{ post.author }}') {
+                                document.getElementById("{{ post.id }}").style.display = "none";
+                            }
+
+
+                            $("#editPost{{ post.id }}").click(function () {
+                                if ($(".title{{ post.id }}").val() == "" || $(".text{{ post.id }}").val() == "") {
+                                    alert("Empty text");
+                                }
+                                else {
+                                    debugger;
+                                    var title = $(".title{{ post.id }}").val();
+                                    var text = $(".text{{ post.id }}").val();
+                                    var author = '{{ username }}';
+                                    var method = "UPDATE"
+                                    var id = {{ post.id }}
+                                        globalWebSockeet[0].send({
+                                            "id": id,
+                                            "method": method,
+                                            "title": title,
+                                            "author": author,
+                                            "text": text
+                                        });
+                                    $("#title{{ post.id }}").text(title);
+                                    $("#text{{ post.id }}").text(text);
+                                    $('#myModal{{ post.id }}').modal('hide')
+                                }
+
+                            });
+
+                            $("#delete{{ post.id }}").click(function () {
+                                globalWebSockeet[0].send({
+                                    "id": {{ post.id }},
+                                    "method": "DELETE",
+                                    "title": "empty",
+                                    "author": "empty",
+                                    "text": "empty"
+                                });
+                                $("#post{{ post.id }}").hide();
+                                $('#deModal{{ post.id }}').modal('hide')
+
+                            });
+
+                        </script>
+
+                        {#                <a href="{% url 'post_detail' pk=post.pk %}">Comments: {{ post.comments.count }}</a>#}
+                    </div>
+                    <hr style="border-width: 3px">
+                </div>
+            {% endfor %}
+        </div>
+        <div class="post">
+        {% if userlogedin %}
+            <table>
+                {% csrf_token %}
+
+                <tr>
+                    <td>
+                        <label>title</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input placeholder="type new title" class="title-post"></td>
+                </tr>
+                <td>
+                    <label>post</label>
+                </td>
+                <tr>
+                    <td>
+                        <textarea placeholder="type new post here" class="text-post"></textarea></td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <button class="btn-primary post-button">post</button>
+                    </td>
+                </tr>
+
+
+            </table>
+        {% endif %}
+
+
+    {% endblock content %}
+
+{% if error %}
+    <script>
+        alert("{{error}}");
+    </script>
+{% endif %}
+</div>
+
+    <script>
+        var globalWebSockeet = [];
+        $(function () {
+            var ws_path = window.location.pathname + "stream/";
+            console.log("Connecting to " + ws_path);
+            var x = $('#welcomeUser').text();
+            var username = x.replace(/ welcome back /g, '');
+            var webSocketBridge = new channels.WebSocketBridge();
+            webSocketBridge.connect(ws_path);
+            globalWebSockeet.push(webSocketBridge);
+            webSocketBridge.listen(function (data) {
+                debugger;
+                console.log(data)
+                var content = "<div class='post' id='post" + data.id
+                    + "'><div><h1><a href='/blog/post/" + data.id + "'><span id='title"
+                    + data.id
+                    + "'>"
+                    + data.title
+                    + "</span>"
+                    + "</a></h1><small style='color: gray'> by "
+                    + data.author
+                    + "</small><small class='date'>"
+                    + data.created_date
+                    + "</small></div><br><p id='text" + data.id + "'>"
+                    + data.text + "<br></p>"
+                    + "<div id='"
+                    + data.id
+                    + "'><button type='button' class='btn' data-toggle='modal' data-target='#deModal"
+                    + data.id
+                    + "'> delete </button> <div class='modal fade' id='deModal"
+                    + data.id
+                    + "' role='dialog'><div class='modal-dialog'><!-- Modal content--><div class='modal-content'><div class='modal-header'><button type='button' class='close' data-dismiss='modal'>&times;</button></div><p>are you sure you want to delete this post</p><div class='modal-footer'><button type='button' class='btn btn-default' data-dismiss='modal'>no</button><button type='button' class='btn btn-default' onclick='delete("
+                    + data.id
+                    + ")'>yes</button></div></div></div></div><button type='button' class='btn' data-toggle='modal' data-target='#myModal"
+                    + data.id
+                    + "'>edit</button><div class='modal fade' id='myModal"
+                    + data.id
+                    + "' role='dialog'><div class='modal-dialog'><!-- Modal content--><div class='modal-content'><div class='modal-header'><button type='button' class='close' data-dismiss='modal'>&times;</button><table><tr><td><label>title</label></td></tr><tr><td><input value='"
+                    + data.title
+                    + "' class='title" + data.id + "'></td></tr><td><label>post</label></td><tr><td><textarea class='text" + data.id + "'>"
+                    + data.text
+                    + "</textarea></td></tr><tr><td><button id='editPost"
+                    + data.id + "'>save</button></td></tr></table><div class='modal-footer'><button type='button' class='btn' data-dismiss='modal'>Close</button></div></div></div></div></div>  <script> if ('"
+                    + username
+                    + "' != '"
+                    + data.author
+                    + "') {document.getElementById('"
+                    + data.id
+                    + "').style.display = 'none';}"
+                    + "$('#editPost"
+                    + data.id
+                    + "').click(function () {if ($('.title"
+                    + data.id
+                    + "').val() == '' || $('.text"
+                    + data.id
+                    + "').val() == '') {alert('Empty text');}else {debugger;var title = $('.title"
+                    + data.id
+                    + "').val();var text = $('.text"
+                    + data.id
+                    + "').val();var author = '"
+                    + username
+                    + "';globalWebSockeet[0].send({'id':" + data.id + ", 'method': 'UPDATE','title': title, 'author': author, 'text': text});$('#title"
+                    + data.id
+                    + "').text(title);$('#text"
+                    + data.id
+                    + "').text(text); $('#myModal" + data.id + "').modal('hide')}});"
+                    + "<\/script></div> <hr style='border-width: 3px'></div>"
+
+                debugger;
+                var existing = $("#post" + data.id);
+                if (existing.length) {
+                    existing.html(content);
+                } else {
+                    $("#to-append-data").append(content);
+                }
+            });
+
+
+            $(".post-button").click(function () {
+                if ($(".title-post").val() == "" || $(".text-post").val() == "") {
+                    alert("Empty text");
+                }
+                else {
+                    var title = $(".title-post").val();
+                    var text = $(".text-post").val();
+                    var author = '{{ username }}';
+                    var method = "POST"
+                    var id = "empty"
+                    webSocketBridge.send({
+                        "id": id,
+                        "method": method,
+                        "title": title,
+                        "author": author,
+                        "text": text
+                    });
+                    $(".title-post").val('');
+                    $(".text-post").val('');
+                }
+
+            });
+        });
+    </script>
+{% endblock %}
