@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect, HttpResponseRedirect
@@ -20,15 +20,20 @@ def login_view(request):
                 try:
                     username = User.objects.get(email=username).username
                 except:
-                    pass
+                    return render(request, 'login.html', {"error": "your email is not correct"})
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
                 return redirect(main_page_view)
             else:
-                return render(request, 'temp.html')
+                return render(request, 'login.html', {"error": "user or password are incorrect"})
         else:
             return render(request, 'login.html', )
+
+
+def logout_view(request):
+    logout(request)
+    return render(request, 'login.html', )
 
 
 def signup_view(request):
@@ -81,5 +86,3 @@ def post_view(request, pk):
     post = Post.objects.get(id=pk)
     print post.title
     return render(request, 'post.html', {'post': post})
-
-

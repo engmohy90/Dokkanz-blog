@@ -7,15 +7,15 @@
         <button name="logout" style="background-color: green; width: 136px; height: 40px">logout</button>
     </a>
     <hr style="border-width: 1px">
-       <div class="post">
-            <div class="date">
-                {{ post.published_date }}
-            </div>
-            <h1><a href="{% url 'post_detail' pk=post.pk %}">{{ post.title }}</a></h1>
-            <p>{{ post.text|linebreaksbr }}</p>
-            <a href="{% url 'post_detail' pk=post.pk %}">Comments: {{ post.comments.count }}</a>
+    <div class="post">
+        <div class="date">
+            {{ post.published_date }}
         </div>
-    <button name="del" value="{{post.id}}">delete</button>
-    <button name="edit" value="{{post.id}}">edit</button>
-  </form>
- {% endblock %}
+        <h1><a href="{% url 'post_detail' pk=post.pk %}">{{ post.title }}</a></h1>
+        <p>{{ post.text|linebreaksbr }}</p>
+        <a href="{% url 'post_detail' pk=post.pk %}">Comments: {{ post.comments.count }}</a>
+    </div>
+    <button name="del" value="{{ post.id }}">delete</button>
+    <button name="edit" value="{{ post.id }}">edit</button>
+
+{% endblock %}
