@@ -1,21 +1,15 @@
 {% extends "html.html" %}
 {% block html %}
-    <a href="/newpost">
-        <button name="newpost" style="background-color: green; width: 136px; height: 40px">new post</button>
-    </a>
-    <a href="/logout">
-        <button name="logout" style="background-color: green; width: 136px; height: 40px">logout</button>
-    </a>
-    <hr style="border-width: 1px">
-    <div class="post">
-        <div class="date">
-            {{ post.published_date }}
+    <div class="post" id="post{{ post.id }}">
+        <div>
+            <h1><a href="{% url 'post_detail' pk=post.pk %}"><span
+                    id="title{{ post.id }}">{{ post.title }}</span></a></h1>
+            <small style="color: gray"> by {{ post.author }}</small>
+            <small class="date">
+                {{ post.created_date }}
+            </small>
         </div>
-        <h1><a href="{% url 'post_detail' pk=post.pk %}">{{ post.title }}</a></h1>
-        <p>{{ post.text|linebreaksbr }}</p>
-        <a href="{% url 'post_detail' pk=post.pk %}">Comments: {{ post.comments.count }}</a>
+        <br>
+        <p id="text{{ post.id }}">{{ post.text|linebreaksbr }}</p>
     </div>
-    <button name="del" value="{{ post.id }}">delete</button>
-    <button name="edit" value="{{ post.id }}">edit</button>
-
 {% endblock %}

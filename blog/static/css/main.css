@@ -89,7 +89,14 @@ textarea {
 
 }
 
+.loginForm {
+    max-width: 640px;
+    margin: auto;
+}
 
+hr {
+    border-width: 3px;
+}
 
 
 

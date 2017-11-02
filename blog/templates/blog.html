@@ -3,16 +3,23 @@
 
     {% if messages %}
         {% for message in messages %}
-            <p class="alert alert-success" {% if message.tags %}
-               class="{{ message.tags }}"{% endif %}>{{ message }}</p>
+            <div class="row">
+                <div class="alert alert-warning alert-dismissible col-sm-2 col-md-offset-5" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                            aria-hidden="true">&times;</span>
+                    </button>
+                    {{ message }}
+                </div>
+            </div>
         {% endfor %}
     {% endif %}
+
     {% block content %}
         <div id="to-append-data">
             {% for post in posts %}
                 <div class="post" id="post{{ post.id }}">
                     <div>
-                        <h1><a href="{% url 'post_detail' pk=post.pk %}"><span
+                        <h1><a href="{% url 'post_detail' pk=post.id %}"><span
                                 id="title{{ post.id }}">{{ post.title }}</span></a></h1>
                         <small style="color: gray"> by {{ post.author }}</small>
                         <small class="date">
@@ -89,10 +96,8 @@
                                     </div>
                                 </div>
                             </div>
-                            {#                <a href="{% url 'post_detail' pk=post.pk %}">Comments: {{ post.comments.count }}</a>#}
                         </div>
-
-                        <hr style="border-width: 3px">
+                        <hr>
                     {% endif %}
                 </div>
             {% endfor %}
@@ -136,6 +141,10 @@
         var username;
         $(function () {
             getSocketData();
+            setTimeout(function () {
+                $(".alert-success").hide()
+            }, 3000);
+
         });
 
         function getSocketData(sendData) {
@@ -186,7 +195,7 @@
                 + data.text
                 + "</textarea></td></tr><tr id='" + data.id + "'><td><button id='editPost"
                 + data.id + "' onclick='addEditPost(this.closest(\'tr\'))' >save</button></td></tr></table><div class='modal-footer'><button type='button' class='btn' data-dismiss='modal'>Close</button></div></div></div></div></div>"
-                + "</div> <hr style='border-width: 3px'></div>";
+                + "</div> <hr ></div>";
             if ($("#post" + data.id).length) {
                 $("#post" + data.id).html(content);
             } else {

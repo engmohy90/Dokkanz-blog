@@ -1,6 +1,6 @@
 {% extends "html.html" %}
 {% block html %}
-
+    <div class="loginForm">
     <form class="form-horizontal" method="post">
         {% csrf_token %}
         <p style="color: red"> {{ error }}</p>
@@ -23,5 +23,6 @@
         </div>
 
     </form>
+    </div>
 
 {% endblock %}

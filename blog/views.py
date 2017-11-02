@@ -39,7 +39,7 @@ def logout_view(request):
 def signup_view(request):
     if request.user.is_authenticated():
         messages.warning(request, 'you allready loged in')
-        return render(request, 'blog.html')
+        return redirect(main_page_view)
     else:
         if request.method == 'POST':
             form = SignUpForm(request.POST)
@@ -50,19 +50,14 @@ def signup_view(request):
                 user = authenticate(username=username, password=raw_password)
                 login(request, user)
                 messages.info(request, 'you have loged in')
-                return render(request, 'blog.html', )
+                return redirect(main_page_view)
         else:
             form = SignUpForm()
         return render(request, 'signup.html', {'form': form})
 
 
+# @login_required(login_url='/blog/login/')
 def main_page_view(request):
-    if request.user.is_authenticated():
-        userlogedin = True
-        username = request.user.get_username()
-    else:
-        userlogedin = False
-        username = ""
     if request.method == 'POST' and request.user.is_authenticated():
 
         title = request.POST.get('title')
@@ -72,11 +67,12 @@ def main_page_view(request):
         return HttpResponseRedirect('/blog')
 
     else:
+        username = request.user.get_username()
         posts = Post.objects.order_by('published_date').all()
         return render(request, 'blog.html',
                       {
                           'posts': posts,
-                          'userlogedin': userlogedin,
+                          'userlogedin': True,
                           'username': username
                       })
 
@@ -84,5 +80,10 @@ def main_page_view(request):
 @login_required(login_url='/blog/login/')
 def post_view(request, pk):
     post = Post.objects.get(id=pk)
-    print post.title
-    return render(request, 'post.html', {'post': post})
+    username = request.user.get_username()
+    return render(request, 'post.html',
+                  {
+                      'post': post,
+                      'userlogedin': True,
+                      'username': username
+                  })
