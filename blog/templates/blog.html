@@ -156,10 +156,15 @@
                 webSocketBridge = new channels.WebSocketBridge();
                 webSocketBridge.connect(ws_path);
                 webSocketBridge.listen(function (data) {
-                    if (data.deleted == true) {
-                        $("#post" + data.id).hide();
+                    if (data.error) {
+                        alert(data.error)
                     } else {
-                        drawBlog(data);
+
+                        if (data.deleted == true) {
+                            $("#post" + data.id).hide();
+                        } else {
+                            drawBlog(data);
+                        }
                     }
                 });
             }
@@ -222,8 +227,8 @@
                 };
                 getSocketData(d_send);
                 if ($(post).attr('id')) {
-                    $("#title" + $(post).attr('id')).text(title);
-                    $("#text" + $(post).attr('id')).text(text);
+{#                    $("#title" + $(post).attr('id')).text(title);#}
+{#                    $("#text" + $(post).attr('id')).text(text);#}
                     $('#myModal' + $(post).attr('id')).modal('hide')
                 } else {
                     $(".title-post").val('');
@@ -241,7 +246,7 @@
                 "text": ""
             };
             getSocketData(d_send);
-            $("#post" + id).hide();
+{#            $("#post" + id).hide();#}
             $('#deModal' + id).modal('hide')
         }
     </script>
