@@ -9,17 +9,15 @@ from .models import Post
 
 @channel_session_user_from_http
 def connect_blog(message):
-    # if message.user.is_authenticated():
-    message.reply_channel.send({"accept": True})
-    print "connected"
-    Group("blog").add(message.reply_channel)
-    # else:
-    #     message.reply_channel.send({"close": True})
+    if message.user.is_authenticated():
+        message.reply_channel.send({"accept": True})
+        Group("blog").add(message.reply_channel)
+    else:
+        message.reply_channel.send({"close": True})
 
 
 @channel_session_user
 def disconnect_blog(message):
-    print "disconnected"
     Group("blog").discard(message.reply_channel)
 
 
@@ -37,19 +35,12 @@ def save_post(message):
             author = User.objects.get(username=author)
             Post.objects.create(author=author, title=title, text=text)
         if method == "UPDATE":
-            print "in updat"
-
             postQ = Post.objects.get(id=id)
-            print requestSender, postQ.author
             if requestSender == str(postQ.author):
-                print "in updat insidyyyyyyyyyyyyyyy if"
-                print requestSender, postQ.author
-                author = User.objects.get(username=author)
                 postQ.text = text
                 postQ.title = title
                 postQ.save()
             else:
-                print "in updat outside if"
                 message.reply_channel.send({
                     "text": json.dumps({'error': "you are not auth this is not your post"}),
                 })
@@ -65,5 +56,6 @@ def save_post(message):
                 message.reply_channel.send({
                     "text": json.dumps({'error': "you are not auth this is not your post"}),
                 })
+
     except:
         return

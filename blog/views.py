@@ -56,7 +56,7 @@ def signup_view(request):
         return render(request, 'signup.html', {'form': form})
 
 
-# @login_required(login_url='/blog/login/')
+@login_required(login_url='/blog/login/')
 def main_page_view(request):
     if request.method == 'POST' and request.user.is_authenticated():
 
