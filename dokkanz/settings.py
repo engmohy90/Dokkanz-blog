@@ -24,7 +24,7 @@ SECRET_KEY = '$sd=*2o%ris540i)7k!i3rjtndiw3tk1_$2ii0fou&whw2lz+s'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -75,11 +75,14 @@ WSGI_APPLICATION = 'dokkanz.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'blog',
+        'USER': 'bloguser',
+        'PASSWORD': 'Tiger@1990@$%^T22',
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
-
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
 

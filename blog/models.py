@@ -28,8 +28,6 @@ class Post(models.Model):
             "text": self.text,
             "created_date": self.created_date.strftime("%a %d %b %Y %H:%M"),
         }
-        print("======notification====")
-        print(notification)
         Group('blog').send({
 
             "text": json.dumps(notification),
