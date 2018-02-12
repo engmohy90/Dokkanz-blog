@@ -75,14 +75,21 @@ WSGI_APPLICATION = 'dokkanz.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'blog',
-        'USER': 'bloguser',
-        'PASSWORD': 'Tiger@1990@$%^T22',
-        'HOST': 'localhost',
-        'PORT': '',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'sqlite3.db'),
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'blog',
+#         'USER': 'bloguser',
+#         'PASSWORD': 'Tiger@1990@$%^T22',
+#         'HOST': 'localhost',
+#         'PORT': '',
+#     }
+# }
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
 

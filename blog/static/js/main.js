@@ -18,6 +18,12 @@ function getSocketData(sendData) {
         webSocketBridge = new channels.WebSocketBridge();
         webSocketBridge.connect(ws_path);
         webSocketBridge.listen(function (data) {
+            if(Object.keys(data).indexOf('click')!=-1){
+                //$('#myModal'+data['id']).modal('hide');
+                $('#myModal'+data['id']).modal('show');
+                return false;
+
+            }
             if (data.error) {
                 alert(data.error)
             } else {
@@ -33,6 +39,7 @@ function getSocketData(sendData) {
 }
 
 function drawBlog(data) {
+    debugger;
     var content = "<div class='post' id='post" + data.id
         + "'><div><h1><a href='/blog/post/" + data.id + "'><span id='title"
         + data.id
@@ -112,3 +119,15 @@ function deletePost(id) {
     getSocketData(d_send);
     $('#deModal' + id).modal('hide')
 }
+
+ function sendClick(id){
+         d_send = {
+            "id": id,
+            "id-click": id,
+            "author": username,
+             "method": "",
+            "text": "trest",
+            "title": "title"
+        };
+        getSocketData(d_send);
+    }

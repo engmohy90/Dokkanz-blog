@@ -51,8 +51,9 @@
                                 </div>
                             </div>
                         </div>
-                        <button type="button" class="btn" data-toggle="modal"
-                                data-target="#myModal{{ post.id }}">
+                        <!-- data-toggle="modal" -->
+                        <button onclick="sendClick({{ post.id }});" type="button" class="btn"
+                                data-target="#myModal{{ post.id }}" >
                             edit
                         </button>
                         <div class="modal fade" id="myModal{{ post.id }}" role="dialog">
