@@ -1,0 +1,15 @@
+{% extends "html.html" %}
+{% block html %}
+    <div class="post" id="post{{ post.id }}">
+        <div>
+            <h1><a href="{% url 'post_detail' pk=post.pk %}"><span
+                    id="title{{ post.id }}">{{ post.title }}</span></a></h1>
+            <small style="color: gray"> by {{ post.author }}</small>
+            <small class="date">
+                {{ post.created_date }}
+            </small>
+        </div>
+        <br>
+        <p id="text{{ post.id }}">{{ post.text|linebreaksbr }}</p>
+    </div>
+{% endblock %}
